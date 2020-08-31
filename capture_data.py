@@ -1,5 +1,6 @@
 import serial
 import time
+import sys
 
 if __name__ == "__main__":
     import serial.tools.list_ports
@@ -12,12 +13,15 @@ if __name__ == "__main__":
     ser = serial.Serial(port=port.device, baudrate=115200, timeout=0.5)
     # ser.open()
 
-    date = "08_26"  # change the date to the date of today
+    date = sys.argv[1]  # change the date to the date of today
 
-    ser.write(b'svc_rawcap cfg 4 7\r')
+    ser.write(b'svc_app format_id 7\r')  #换去HDR模式
+
+    time.sleep(1)
+    ser.write(b'svc_rawcap cfg 4 7\r')  #//capture camera 1 raw data
     time.sleep(1)
 
-    image_nums = 10
+    image_nums = 10000
 
     for index in range(image_nums):
         index = "%06d" % index
@@ -30,6 +34,6 @@ if __name__ == "__main__":
 
         result = ser.readlines()  # .decode('utf-8')
         for line in result:
-            print(line.decode())
+            print(line.decode())  # if system language is chinese, use 'utf-8' decode
 
     ser.close()
